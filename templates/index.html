@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Comment Moderation</title>
+</head>
+<body>
+  <h2>Comment Moderation Test</h2>
+  <form id="moderationForm">
+    <label for="comment">Enter comment:</label><br><br>
+    <textarea id="comment" name="comment" rows="4" cols="50"></textarea><br><br>
+    <button type="submit">Check</button>
+  </form>
+
+  <h3 id="result"></h3>
+
+  <script>
+    document.getElementById("moderationForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const comment = document.getElementById("comment").value;
+
+      fetch("/moderate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ comment: comment })
+      })
+      .then(response => response.json())
+      .then(data => {
+        const result = document.getElementById("result");
+        if (data.flagged) {
+          result.textContent = "❌ Comment is flagged as vulgar.";
+          result.style.color = "red";
+        } else {
+          result.textContent = "✅ Comment is allowed.";
+          result.style.color = "green";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
